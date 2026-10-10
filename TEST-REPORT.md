@@ -1,6 +1,6 @@
 # Little Moments - Test Report
 
-Version: 1.2
+Version: 1.3
 Status: Executed (end-to-end against a live Supabase project)
 Reference plan: TEST-PLAN.md
 
@@ -14,7 +14,7 @@ Reference plan: TEST-PLAN.md
 | Next.js | 16.4.0 (App Router, Turbopack) |
 | React | 19.3.0 |
 | TypeScript | strict |
-| Supabase | **configured** - live project, migrations `0001` + `0002` applied; `0003` (multi-photo) pending apply |
+| Supabase | **configured** - live project, migrations `0001` + `0002` + `0003` applied |
 
 Commands used to build and validate the code base:
 
@@ -53,17 +53,17 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | F11 | Pagination | 13 seeded rows | Page 1 = 12 cards, Page 2 = 1 card, links correct | PASS |
 | F12 | Out-of-range page clamped | `?page=99` with 2 pages | Last page ("Page 2 of 2"), not an error | PASS |
 | F13 | Invalid filter value | `?view=month&month=2024-13` | Falls back to "All", no crash | PASS |
-| F14 | Create memory with multiple photos | Form + 3 photos | Cover = photo 1, 2 rows in `memory_images` | BLOCKED (needs migration `0003`) |
-| F15 | Detail gallery | Memory with extra photos | Gallery renders below story | BLOCKED (needs migration `0003`) |
-| F16 | Edit extras (add / remove) | Edit form | Added rows inserted, removed rows + files deleted | BLOCKED (needs migration `0003`) |
-| F17 | Delete memory with extras | Confirm dialog | Row, `memory_images` rows and all files removed | BLOCKED (needs migration `0003`) |
-| F18 | Scrapbook settings | `/settings` form | `scrapbook_settings` updated, header refreshed | READY (code path; live run pending) |
+| F14 | Create memory with multiple photos | Form + 3 photos | Cover = photo 1, 2 rows in `memory_images` | PASS - cover + 2 rows (`position` 0/1), UUID filenames |
+| F15 | Detail gallery | Memory with extra photos | Gallery renders below story | PASS - 2 extras served via `/api/memory-images/[id]` |
+| F16 | Edit extras (add / remove) | Edit form | Added rows inserted, removed rows + files deleted | PASS - survivors renumbered 0..n-1, removed file gone |
+| F17 | Delete memory with extras | Confirm dialog | Row, `memory_images` rows and all files removed | PASS - `memories`, `memory_images` and bucket all empty |
+| F18 | Scrapbook settings | `/settings` form | `scrapbook_settings` updated, header refreshed | PASS - live update plus revert verified |
 
 # 3. Security tests
 
 | # | Test | Method | Expected | Result |
 | --- | --- | --- | --- | --- |
-| S1 | Private route protection | `GET /memories` without session | `307` to `/`, gate shown, **no private content** | PASS |
+| S1 | Private route protection | `GET /memories` without session | Redirect to `/`, gate shown, **no private content** | PASS - streamed `200` + client redirect; body has **no** private content |
 | S2 | Session cookie flags (dev) | `Set-Cookie` header | `HttpOnly`, `SameSite=lax`, `Max-Age` limited | PASS |
 | S3 | Session cookie flags (prod) | `Set-Cookie` header | `Secure; HttpOnly; SameSite=lax` | PASS |
 | S4 | No token in localStorage | Client components | Session only in HttpOnly cookie | PASS (by design) |
@@ -78,7 +78,7 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | S13 | Friendly errors, no leaks | Error boundary + logs | "Oops, something went wrong" UI; no internal message in HTML | PASS |
 | S14 | Secrets not exposed | Server-only admin client | Secret key never reaches the browser bundle | PASS (by design) |
 | S15 | Not indexable | `<meta name="robots">` | `noindex, nofollow` | PASS |
-| S16 | Extra photo endpoint requires session | `GET /api/memory-images/[id]` without cookie | `401` | PASS (code path) |
+| S16 | Extra photo endpoint requires session | `GET /api/memory-images/[id]` without cookie | `401` | PASS - live `401` |
 | S17 | Extra photo path is server resolved | `GET /api/memory-images/[id]` | Path read from DB, client cannot inject it | PASS (code path) |
 
 # 4. Data / storage integrity
@@ -92,7 +92,7 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | D5 | Delete removes row **and** storage object | PASS - both empty after F9d |
 | D6 | Image proxy hides the signed URL | PASS - browser only ever calls `/api/images/[id]` |
 | D7 | Extra photo proxy hides the signed URL | PASS (code path) - browser calls `/api/memory-images/[id]` |
-| D8 | Multi-photo files cleaned on delete | Verified in code (cover + all `memory_images` paths removed) |
+| D8 | Multi-photo files cleaned on delete | PASS - bucket empty after deleting a memory with cover + 2 extras |
 
 # 5. Responsive / UI tests
 
@@ -101,11 +101,15 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | R1 | Mobile gate layout (single column, large touch targets) | Browser viewport | PASS (structure) |
 | R2 | Desktop timeline centered, 3 columns | Code review (`MemoryTimeline` grid `sm:grid-cols-2 lg:grid-cols-3`) | PASS (structure) |
 | R3 | Reduced motion support | `@media (prefers-reduced-motion)` | PASS (code path) |
+| R4 | No horizontal overflow | Rendered page measured at 320 / 390 / 768 / 1280 px | PASS - `scrollWidth <= innerWidth` on timeline, `/memories/new`, `/settings`, 404 |
+| R5 | Mobile viewport + safe areas | `viewport-fit=cover`, `env(safe-area-inset-*)` on the page bottom and floating button | PASS |
 
 > Visual polish (colours, polaroid rotation, stickers) follows DESIGN.md and is
 > best confirmed by the project owner with real photos.
 
-# 6. Bug found and fixed during this run
+# 6. Bugs found and fixed during this run
+
+## 6.1 Out-of-range pagination (v1.2)
 
 `getMemories` treated an out-of-range page as a fatal error. PostgREST answers
 a `.range()` past the end with **416 "Requested range not satisfiable"**, so the
@@ -117,16 +121,27 @@ compute the page bounds, clamp the requested page, then fetch that range. The
 extra count query removes the 416 path entirely. Re-tested: `?page=99` now
 renders the last page, and `?page=1` / `?page=2` still paginate correctly.
 
+## 6.2 Duplicate gallery positions after editing (v1.3)
+
+Editing a memory and removing one of several extra photos left the surviving
+rows sharing the same `position` (e.g. `1` and `1`): new photos were numbered
+from `keptExtras.length`, while the survivors kept their old numbers, so the
+gallery order became unstable.
+
+Fix (`src/features/memories/actions.ts`, `updateMemory`): after the removals are
+deleted, the surviving extras are renumbered to a contiguous `0..n-1` while new
+photos keep `keptExtras.length + index`. Re-tested: an edit that removed one
+extra and added one produced `positions` `[0, 1]`, and the removed storage file
+was deleted.
+
 # 7. Not executed
 
 - **S12 (upload ticket binding)**: needs a crafted Server Action call to skip
   the ticket; reviewed in code (`verifyUploadTicket` in `createMemory` /
   `updateMemory`) but not exercised end to end.
-- **Multi-photo (F14-F17)**: implemented and statically validated (typecheck,
-  lint, build). A live end-to-end run is blocked until migration
-  `0003_memory_images.sql` is applied to the Supabase project, because the
-  `memory_images` table does not exist yet.
-- **Scrapbook Settings (F18)**: implemented; live run pending.
+
+Multi-photo (F14-F17) and Scrapbook Settings (F18) were executed end to end
+against the live project after migration `0003` was applied.
 
 # 7.1 Changes since v1.1
 
@@ -140,16 +155,29 @@ renders the last page, and `?page=1` / `?page=2` still paginate correctly.
   (`src/lib/supabase/image-response.ts`).
 - Migrasi baru `0003_memory_images.sql`.
 
+# 7.2 Changes since v1.2
+
+- Polish responsif mobile-first: `viewport-fit=cover`, safe-area pada padding
+  bawah halaman dan tombol mengambang, `overflow-x: clip` pada body,
+  `break-words` untuk teks panjang, modal bisa di-scroll, pagination/filter
+  boleh membungkus (DESIGN.md section 16).
+- Verifikasi multi-foto end to end setelah migration `0003` diterapkan
+  (buat, galeri, ubah, hapus, plus pembersihan storage).
+- Perbaikan urutan foto (`position`) saat salah satu foto ekstra dihapus (6.2).
+- Verifikasi `/settings` end to end (ubah lalu kembalikan) lewat `updated_at`.
+
 # 8. Summary
 
 - Static validation: **typecheck, lint, and production build all pass**.
-- Full CRUD, upload, image proxy, filtering, pagination, and storage cleanup:
-  **verified end to end against the live project**.
+- Full CRUD (incl. multi-photo), upload, image proxy, settings, filtering,
+  pagination, and storage cleanup: **verified end to end against the live
+  project**.
 - Authentication, session handling, route protection, cookie security, rate
   limiting, file validation, and error handling: **verified**.
 - Storage stays private; the database stores paths only; no secrets reach the
   client.
-- One real bug (out-of-range pagination) was found and fixed.
-- v1.2 adds multi-photo and the settings page; both pass static validation
-  (typecheck, lint, production build). Live verification waits on migration
-  `0003`.
+- Layout is mobile-first and overflow-free at 320 / 390 / 768 / 1280 px.
+- Two real bugs were found and fixed: out-of-range pagination (v1.2) and
+  duplicate gallery positions after an edit (v1.3).
+- v1.3 applies migration `0003`, completes the multi-photo and settings live
+  runs, and adds the responsive polish.

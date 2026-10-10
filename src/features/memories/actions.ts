@@ -309,6 +309,25 @@ export async function updateMemory(
     }
   }
 
+  // 3b. Renumber the remaining extras (kept first, then the just inserted)
+  //     so `position` stays contiguous and unique (0..n-1). Without this a
+  //     removal could leave the survivors sharing a position and the gallery
+  //     order would become unstable.
+  if (keptExtras.length > 0) {
+    const reordered = await Promise.all(
+      keptExtras.map((row, index) =>
+        supabase
+          .from("memory_images")
+          .update({ position: index })
+          .eq("id", row.id),
+      ),
+    );
+
+    if (reordered.some((result) => result.error) && !message) {
+      message = "Kenangan tersimpan, tapi urutan foto belum sepenuhnya rapi.";
+    }
+  }
+
   // 4. Remove storage files that are no longer referenced.
   const oldFiles = [
     ...(removedRowsDeleted ? removedExtras.map((row) => row.image_path) : []),
