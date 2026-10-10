@@ -92,7 +92,7 @@ export function MemoryFilter({ filter, years }: MemoryFilterProps) {
         </div>
 
         {filter.view !== "all" ? (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Label htmlFor={`filter-${filter.view}`} className="text-xs text-ink-soft">
               {filter.view === "day"
                 ? "Tanggal"

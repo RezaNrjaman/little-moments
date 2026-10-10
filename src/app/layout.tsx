@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { Fredoka, Nunito_Sans } from "next/font/google";
 import { ToastNotifications } from "@/components/scrapbook/ToastNotifications";
@@ -20,6 +20,19 @@ export const metadata: Metadata = {
   description: "Buku kecil privat kita berdua - foto, cerita, dan kenangan.",
   // This scrapbook is private: never index it in search engines.
   robots: { index: false, follow: false },
+};
+
+/**
+ * Mobile-first viewport (PRD section 10: responsive web).
+ * `viewportFit: "cover"` lets the scrapbook use the full screen on notched
+ * phones; safe areas are respected through the `safe-*` helpers in
+ * globals.css. Zoom is intentionally left enabled for accessibility.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#fff7f0",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

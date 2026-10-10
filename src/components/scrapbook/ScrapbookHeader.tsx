@@ -17,7 +17,7 @@ export function ScrapbookHeader({
 }: ScrapbookHeaderProps) {
   return (
     <header className="relative mx-auto w-full max-w-3xl px-4 pt-6 sm:px-6">
-      <div className="mb-3 flex justify-end gap-2">
+      <div className="mb-3 flex flex-wrap justify-end gap-2">
         <Link
           href="/settings"
           aria-label="Buka pengaturan buku"
@@ -29,7 +29,7 @@ export function ScrapbookHeader({
         <LogoutButton />
       </div>
 
-      <div className="polaroid relative overflow-hidden px-6 pb-7 pt-8 text-center">
+      <div className="polaroid relative px-6 pb-7 pt-8 text-center">
         <span className="tape" aria-hidden />
 
         <span
@@ -45,14 +45,14 @@ export function ScrapbookHeader({
           ♡
         </span>
 
-        <h1 className="font-heading text-3xl font-semibold text-ink sm:text-4xl">
+        <h1 className="text-balance break-words font-heading text-3xl font-semibold text-ink sm:text-4xl">
           <Heart
             className="mr-1 inline h-6 w-6 -translate-y-0.5 fill-[#f27d8d] text-[#f27d8d]"
             aria-hidden
           />
           {coupleName}
         </h1>
-        <p className="mt-2 text-sm italic text-ink-soft sm:text-base">
+        <p className="mt-2 break-words text-sm italic text-ink-soft sm:text-base">
           {introMessage}
         </p>
       </div>

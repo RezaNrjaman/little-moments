@@ -49,14 +49,14 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
               : format(date, "EEEE, d MMMM yyyy", { locale: localeId })}
           </p>
 
-          <h1 className="mt-2 font-heading text-3xl font-semibold leading-tight text-ink">
+          <h1 className="mt-2 text-balance break-words font-heading text-3xl font-semibold leading-tight text-ink">
             {memory.title}
           </h1>
 
           {memory.location ? (
-            <p className="mt-2 flex items-center justify-center gap-1.5 text-sm text-ink-soft">
-              <MapPin className="h-4 w-4" aria-hidden />
-              {memory.location}
+            <p className="mt-2 flex items-start justify-center gap-1.5 text-sm text-ink-soft">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+              <span className="min-w-0 break-words">{memory.location}</span>
             </p>
           ) : null}
         </div>
@@ -71,7 +71,7 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
             <span className="h-px flex-1 bg-ink/10" aria-hidden />
           </div>
 
-          <p className="whitespace-pre-wrap text-base leading-7 text-ink/90">
+          <p className="whitespace-pre-wrap break-words text-base leading-7 text-ink/90">
             {memory.description}
           </p>
         </section>

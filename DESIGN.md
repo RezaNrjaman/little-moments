@@ -339,22 +339,38 @@ Support: prefers-reduced-motion
 
 # 16. Responsive Rules
 
+Pendekatan: **mobile-first** dengan breakpoint Tailwind.
+
 ## Mobile
 
--   Single column
--   Full width button
--   Large image priority
+-   Single column.
+-   Full width button.
+-   Large image priority.
+-   Tombol aksi form menumpuk vertikal.
 
-## Tablet
+## Tablet (min-width 640px)
 
--   Dua kolom card
+-   Dua kolom card.
+-   Tombol aksi form sejajar ke kanan.
 
-## Desktop
+## Desktop (min-width 1024px)
 
--   Center timeline
--   Alternating card optional
+-   Center timeline, maksimal tiga kolom card.
+-   Konten dibatasi `max-w-6xl` (linimasa) dan `max-w-3xl` (header/detail)
+    agar tetap nyaman dibaca di layar lebar.
 
-------------------------------------------------------------------------
+## Ketahanan tata letak
+
+-   `viewport-fit: cover` untuk layar berponi; jarak aman memakai
+    `env(safe-area-inset-*)` (tombol mengambang dan padding bawah halaman).
+-   Teks panjang (judul, cerita, lokasi) memakai `break-words` supaya tidak
+    merusak lebar.
+-   `overflow-x: clip` pada body mencegah geser samping akibat rotasi kartu
+    dekoratif.
+-   Modal dibatasi tinggi layar dan dapat di-scroll.
+-   Pagination boleh membungkus (`flex-wrap`).
+
+---
 
 # 17. Accessibility
 

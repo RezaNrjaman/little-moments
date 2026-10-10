@@ -43,7 +43,7 @@ export default async function PrivateLayout({
   }
 
   return (
-    <div className="flex min-h-[100dvh] flex-col pb-24">
+    <div className="safe-page-bottom flex min-h-[100dvh] flex-col">
       <ScrapbookHeader coupleName={coupleName} introMessage={introMessage} />
       <main className="flex-1">{children}</main>
 

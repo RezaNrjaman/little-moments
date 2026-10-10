@@ -48,12 +48,12 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
             ? format(date, "d MMMM yyyy", { locale: localeId })
             : memory.memory_date}
         </p>
-        <h3 className="mt-0.5 font-heading text-lg font-semibold leading-snug text-ink">
+        <h3 className="mt-0.5 break-words font-heading text-lg font-semibold leading-snug text-ink">
           {memory.title}
         </h3>
 
         {story ? (
-          <p className="mt-1 line-clamp-2 text-sm text-ink-soft">
+          <p className="mt-1 line-clamp-2 break-words text-sm text-ink-soft">
             {story.length > SNIPPET_LENGTH
               ? `${story.slice(0, SNIPPET_LENGTH).trimEnd()}...`
               : story}
@@ -61,9 +61,9 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
         ) : null}
 
         {memory.location ? (
-          <p className="mt-2 flex items-center gap-1 text-xs text-ink-soft/90">
-            <MapPin className="h-3 w-3" aria-hidden />
-            {memory.location}
+          <p className="mt-2 flex items-start gap-1 break-words text-xs text-ink-soft/90">
+            <MapPin className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
+            <span className="min-w-0">{memory.location}</span>
           </p>
         ) : null}
       </div>

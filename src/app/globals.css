@@ -58,6 +58,11 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
+  /* Keep the layout stable on every device: no accidental sideways scroll
+     (decorative card rotations) and no text auto-inflation on mobile. */
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   /* Soft paper grain, no external asset */
   background-image:
     radial-gradient(rgba(94, 74, 80, 0.045) 1px, transparent 1px),
@@ -115,6 +120,30 @@ h4 {
   justify-content: center;
   border-radius: 9999px;
   box-shadow: var(--shadow-soft);
+}
+
+/* ============================================
+   Responsive safe areas (notched devices)
+   `viewportFit: "cover"` lets the page use the full screen, so these
+   helpers keep content clear of the notch and the home indicator.
+   ============================================ */
+
+/* Reserves room for the floating add button and the phone home indicator. */
+.safe-page-bottom {
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* Floating add button pinned clear of the notch / home indicator. */
+.safe-fab {
+  bottom: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  right: calc(1.25rem + env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 640px) {
+  .safe-fab {
+    bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+    right: calc(2rem + env(safe-area-inset-right, 0px));
+  }
 }
 
 /* ============================================

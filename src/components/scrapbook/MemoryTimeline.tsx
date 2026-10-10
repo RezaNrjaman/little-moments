@@ -75,7 +75,7 @@ export function MemoryTimeline({
       {totalPages > 1 ? (
         <nav
           aria-label="Halaman linimasa"
-          className="mt-10 flex items-center justify-center gap-3"
+          className="mt-10 flex flex-wrap items-center justify-center gap-3"
         >
           {page > 1 ? (
             <Link
