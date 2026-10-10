@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/* ============================================
+   Little Moments - Design Tokens (DESIGN.md)
+   Vanilla Cream / Candy Pink / Soft Lavender /
+   Mint / Butter Yellow / Warm Ink
+   ============================================ */
+
+:root {
+  --background: #fff7f0;
+  --foreground: #5e4a50;
+
+  --cream: #fff7f0;
+  --pink: #ffb9cc;
+  --pink-strong: #ff9bb6;
+  --lavender: #c9bcff;
+  --mint: #bfe8d2;
+  --butter: #ffe39a;
+  --ink: #5e4a50;
+  --ink-soft: #8a747b;
+
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-lift: 0 16px 36px rgba(94, 74, 80, 0.16);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-cream: var(--cream);
+  --color-pink: var(--pink);
+  --color-pink-strong: var(--pink-strong);
+  --color-lavender: var(--lavender);
+  --color-mint: var(--mint);
+  --color-butter: var(--butter);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+
+  --shadow-soft: var(--shadow-soft);
+  --shadow-lift: var(--shadow-lift);
+
+  --font-heading: var(--font-fredoka), "Nunito", ui-rounded, sans-serif;
+  --font-body: var(--font-nunito-sans), "Inter", ui-sans-serif, sans-serif;
+}
+
+/* ============================================
+   Base - journal paper feeling
+   ============================================ */
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  /* Soft paper grain, no external asset */
+  background-image:
+    radial-gradient(rgba(94, 74, 80, 0.045) 1px, transparent 1px),
+    radial-gradient(rgba(255, 185, 204, 0.1) 1px, transparent 1px);
+  background-size: 22px 22px, 34px 34px;
+  background-position: 0 0, 11px 11px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  color: var(--foreground);
+}
+
+/* Visible but gentle focus ring for keyboard users */
+:focus-visible {
+  outline: 3px solid var(--lavender);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: var(--pink);
+  color: var(--foreground);
+}
+
+/* ============================================
+   Scrapbook helpers
+   ============================================ */
+
+.polaroid {
+  background-color: #fffdf9;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-soft);
+  border: 1px solid rgba(94, 74, 80, 0.07);
+}
+
+.tape {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  width: 76px;
+  height: 22px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(255, 227, 154, 0.75);
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(94, 74, 80, 0.12);
+}
+
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* ============================================
+   Animation (150-300ms, reduced motion friendly)
+   ============================================ */
+
+@keyframes lm-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lm-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(var(--float-rotate, 0deg));
+  }
+  50% {
+    transform: translateY(-6px) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+.animate-fade-in {
+  animation: lm-fade-in 240ms ease-out both;
+}
+
+.animate-float {
+  animation: lm-float 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
