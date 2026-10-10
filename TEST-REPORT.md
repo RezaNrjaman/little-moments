@@ -1,6 +1,6 @@
 # Little Moments - Test Report
 
-Version: 1.5
+Version: 1.6
 Status: Executed (end-to-end against a live Supabase project)
 Reference plan: TEST-PLAN.md
 
@@ -64,6 +64,8 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | F22 | Timeline rise-in animation | Inspect `.animate-rise` on `/memories` | Staggered `--rise-delay`, polaroid rotation preserved | PASS - `lm-rise` 0.52s, rotate -1deg / 1deg |
 | F23 | Timeline masonry layout | `/memories` with several memories | 2 / 3 / 4 CSS columns, varied photo shapes and tilts, no overflow | PASS - live: 3 cols @800px, cards 232px, aspects 4:3 / square / 3:4 / 4:5, `scrollWidth` 785 < 800 |
 | F24 | Falling rose petals | Private pages + gate | `FallingPetals` drifts behind the content and pauses under reduced motion | PASS - 18 petals, `lm-fall` 11s, layer `z-index: -10`, measured 48px fall in 700ms |
+| F25 | Import page | `/import` (session) | Folder picker + dropzone, Indonesian copy, header "Impor" link | PASS - page renders, dropzone interactive (dragover restyles), one file input with `webkitdirectory` |
+| F26 | Bulk import per folder | Folders `2024-03-02` (2 photos), `15-04-2024`, `Liburan` | One memory per sub-folder, date from folder name, cover + extras, manual date fix | PASS - 3 memories created (2 Mar / 15 Apr / 1 Jun 2024), 2-photo folder = cover + 1 extra, 0 failures, test data removed |
 
 # 3. Security tests
 
@@ -192,6 +194,16 @@ against the live project after migration `0003` was applied.
   JavaScript klien (F24).
 - Stiker header mengapung lembut (`.animate-float`).
 
+# 7.5 Changes since 1.5
+
+- Halaman baru `/import`: impor massal dari folder. Satu sub-folder = satu
+  kenangan, tanggal dibaca dari nama folder dan bisa dikoreksi (FR-09).
+- Logika murni di `src/features/memories/import.ts` (parsing tanggal + grouping)
+  dan kompresi di browser di `src/lib/images/compress-image.ts`.
+- Folder dengan lebih dari 10 foto dipecah otomatis; foto pertama jadi sampul.
+- Alur unggah memakai endpoint + tiket yang sama, jadi tak ada jalur baru yang
+  melewati validasi server. Tidak ada dependensi baru.
+
 # 8. Summary
 
 - Static validation: **typecheck, lint, and production build all pass**.
@@ -209,3 +221,5 @@ against the live project after migration `0003` was applied.
   duplicate gallery positions after an edit (v1.3).
 - v1.4 adds the lightbox + motion polish; v1.3 applies migration `0003` and
   the responsive polish.
+- v1.5 adds the masonry timeline + falling rose petals; v1.6 adds bulk folder
+  import (F25-F26).

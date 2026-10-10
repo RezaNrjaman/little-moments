@@ -119,12 +119,12 @@ Konsep:
 
     Buku kecil kita berdua
 
-    [ Pengaturan ]   [ Keluar ]
+    [ Impor ]   [ Pengaturan ]   [ Keluar ]
 
 Style: - Rounded - Soft shadow - Center aligned
 
-Catatan: tombol "Pengaturan" dan "Keluar" berada di kanan atas header dan
-hanya tampil di halaman privat.
+Catatan: tombol "Impor", "Pengaturan", dan "Keluar" berada di kanan atas header
+dan hanya tampil di halaman privat.
 
 ------------------------------------------------------------------------
 
@@ -273,6 +273,19 @@ Field:
 Style: kartu polaroid dengan stiker, konsisten dengan form kenangan.
 
 ------------------------------------------------------------------------
+
+# 9.2 Import Photos Page
+
+Halaman `/import` - memasukkan banyak kenangan sekaligus.
+
+Elemen: - Tombol "Impor" di header (di samping "Pengaturan"). - Area unggah
+besar (border dashed) - "Tarik folder ke sini" + tombol "Pilih folder". -
+Ringkasan: jumlah folder, foto, dan kenangan. - Daftar grup (satu per
+sub-folder): thumbnail, nama folder, jumlah foto, dan input tanggal yang bisa
+dikoreksi. - Progress bar saat mengimpor + ringkasan hasil.
+
+Karakter: - Cute playful, konsisten dengan kartu scrapbook. - State jelas:
+kosong, peringatan tanggal, sedang mengimpor, selesai (sukses/gagal).
 
 # 10. Filter Design
 

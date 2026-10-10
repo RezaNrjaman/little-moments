@@ -504,6 +504,55 @@ Catatan:
 -   Boleh dikosongkan.
 -   Tombol "Pengaturan" hanya tampil di halaman privat.
 
+# 12.2 Import Photos Flow
+
+## Goal
+
+Memasukkan banyak kenangan sekaligus dari folder berisi sub-folder
+bertanggal.
+
+Flow:
+
+    Header (tombol "Impor")
+
+        |
+
+    Halaman /import
+
+        |
+
+    Pilih folder (atau tarik folder ke area unggah)
+
+        |
+
+    Dikelompokkan per sub-folder + tanggal dibaca dari nama folder
+
+        |
+
+    Perbaiki tanggal bila perlu -> tombol "Impor"
+
+        |
+
+    Tiap foto dikompres ke JPEG di browser
+
+        |
+
+    /api/uploads/sign -> unggah ke Storage -> createMemory (per folder)
+
+        |
+
+    Ringkasan hasil + linimasa diperbarui
+
+Catatan:
+
+-   Tanggal bisa berasal dari nama folder `2024-03-02`, `15-04-2024`, atau
+    `20240302`; yang tidak terbaca wajib diisi manual.
+-   Maksimal 10 foto per kenangan; folder lebih besar dipecah menjadi beberapa
+    kenangan dengan penanda `(1/2)`, `(2/2)`.
+-   Judul default adalah tanggal (mis. "2 Maret 2024") dan bisa diedit di
+    halaman edit kenangan.
+-   Gagal di satu folder tidak menghentikan folder lain; hasilnya dirangkum.
+
 # 13. Empty State Flow
 
 Kondisi:
@@ -624,6 +673,12 @@ Contoh:
 
 
     Atur nama, tanggal, pesan pembuka
+
+
+    /import
+
+
+    Impor banyak kenangan dari folder
 
 # 17. Mobile User Flow
 

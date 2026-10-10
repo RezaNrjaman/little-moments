@@ -48,6 +48,7 @@ Produk ini bukan media sosial. Fokusnya adalah pengalaman personal, privasi, dan
 - CRUD kenangan.
 - Upload dan penyimpanan foto.
 - Beberapa foto dalam satu kenangan (cover + foto tambahan, maksimal 10).
+- Impor foto massal dari folder (satu sub-folder = satu kenangan).
 - Halaman pengaturan scrapbook (nama, tanggal jadian, pesan pembuka).
 - Detail kenangan.
 - Filter berdasarkan tanggal, bulan, dan tahun.
@@ -179,6 +180,17 @@ MVP menyediakan satu konfigurasi scrapbook:
 
 Pengaturan dapat diubah dari halaman `/settings`. Jika pengaturan belum diisi, website menggunakan nilai default yang dapat diubah.
 
+### FR-09: Impor Foto Massal (Folder)
+
+Mengimpor banyak kenangan sekaligus dari satu folder di perangkat pengguna.
+
+- Pengguna memilih satu folder induk; setiap sub-folder menjadi satu kenangan.
+- Tanggal kenangan diambil dari nama sub-folder (mis. `2024-03-02`, `15-04-2024`, `20240302`) dan bisa diperbaiki manual sebelum diimpor.
+- Foto pertama menjadi sampul, sisanya masuk galeri (maksimal 10 foto per kenangan; folder yang lebih besar dipecah otomatis).
+- Kompresi dan konversi ke JPEG dilakukan di browser agar sesuai batas 5 MB.
+- Judul default memakai tanggal dalam Bahasa Indonesia dan bisa diedit setelah impor.
+- Alur unggah tetap memakai `/api/uploads/sign` + tiket unggah; tidak ada jalur unggah baru yang melewati validasi server.
+
 ## 8. Persyaratan Nonfungsional
 
 ### Keamanan dan privasi
@@ -252,6 +264,7 @@ Elemen visual:
 4. `/memories/[id]` — Detail kenangan.
 5. `/memories/[id]/edit` — Edit kenangan.
 6. `/settings` — Pengaturan scrapbook.
+7. `/import` — Impor foto massal dari folder.
 
 Route dalam grup `(private)` hanya pengelompokan Next.js; grup tersebut tidak menggantikan pemeriksaan autentikasi.
 
@@ -264,6 +277,7 @@ Route dalam grup `(private)` hanya pengelompokan Next.js; grup tersebut tidak me
 - `MemoryCard`
 - `MemoryFilter`
 - `MemoryForm`
+- `PhotoFolderImport`
 - `PhotoPicker`
 - `MemoryImagesEditor`
 - `SettingsForm`

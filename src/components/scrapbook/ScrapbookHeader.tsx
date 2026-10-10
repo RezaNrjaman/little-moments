@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { Heart, Settings2 } from "lucide-react";
+import { FolderPlus, Heart, Settings2 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
 type ScrapbookHeaderProps = {
@@ -19,6 +19,14 @@ export function ScrapbookHeader({
   return (
     <header className="relative mx-auto w-full max-w-3xl px-4 pt-6 sm:px-6">
       <div className="mb-3 flex flex-wrap justify-end gap-2">
+        <Link
+          href="/import"
+          aria-label="Impor foto dari folder"
+          className="inline-flex h-9 items-center gap-1.5 rounded-full border border-ink/15 bg-white/70 px-4 text-sm font-semibold text-ink transition-colors hover:bg-white"
+        >
+          <FolderPlus className="h-3.5 w-3.5" aria-hidden />
+          Impor
+        </Link>
         <Link
           href="/settings"
           aria-label="Buka pengaturan buku"
