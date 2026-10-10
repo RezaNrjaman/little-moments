@@ -1,9 +1,22 @@
+"use client";
+
+import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { id as localeId } from "date-fns/locale";
-import { ArrowLeft, CalendarHeart, MapPin, Pencil } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarHeart,
+  MapPin,
+  Maximize2,
+  Pencil,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteMemoryDialog } from "@/components/forms/DeleteMemoryDialog";
+import {
+  PhotoLightbox,
+  type LightboxPhoto,
+} from "@/components/scrapbook/PhotoLightbox";
 import type { Memory, MemoryImage } from "@/features/memories/types";
 
 type MemoryDetailProps = {
@@ -15,10 +28,35 @@ type MemoryDetailProps = {
 /**
  * MemoryDetail (DESIGN.md section 8).
  * The photo is the hero element, the story is limited to a 700px column.
+ * Tapping any photo opens the framed lightbox with the full set.
  */
 export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const date = parseISO(memory.memory_date);
   const hasStory = memory.description.trim().length > 0;
+  const dateLabel = Number.isNaN(date.getTime())
+    ? memory.memory_date
+    : format(date, "EEEE, d MMMM yyyy", { locale: localeId });
+
+  const coverSrc = `/api/images/${memory.id}`;
+  const photos: LightboxPhoto[] = [
+    {
+      id: memory.id,
+      src: coverSrc,
+      alt: memory.title,
+      title: memory.title,
+      dateLabel,
+      location: memory.location,
+    },
+    ...images.map((image, index) => ({
+      id: image.id,
+      src: `/api/memory-images/${image.id}`,
+      alt: `${memory.title} - foto ${index + 2}`,
+      title: memory.title,
+      dateLabel,
+      location: memory.location,
+    })),
+  ];
 
   return (
     <article className="mx-auto w-full max-w-3xl px-4 pb-6 pt-4 sm:px-6">
@@ -33,20 +71,36 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
       <div className="polaroid relative p-3 sm:p-4">
         <span className="tape" aria-hidden />
 
-        {/* Private photo, served by the session-checked image route. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`/api/images/${memory.id}`}
-          alt={memory.title}
-          className="aspect-[4/3] w-full rounded-[8px] object-cover sm:aspect-[16/10]"
-        />
+        <button
+          type="button"
+          onClick={() => setLightboxIndex(0)}
+          aria-label={`Perbesar foto: ${memory.title}`}
+          className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
+        >
+          {/* Private photo, served by the session-checked image route. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={coverSrc}
+            alt={memory.title}
+            className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] sm:aspect-[16/10]"
+          />
+
+          <span
+            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            aria-hidden
+          />
+          <span
+            className="pointer-events-none absolute bottom-3 right-3 inline-flex h-9 w-9 translate-y-1 items-center justify-center rounded-full bg-white/90 text-ink opacity-0 shadow-soft transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+            aria-hidden
+          >
+            <Maximize2 className="h-4 w-4" />
+          </span>
+        </button>
 
         <div className="px-2 pb-2 pt-5 text-center">
           <p className="flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
             <CalendarHeart className="h-3.5 w-3.5" aria-hidden />
-            {Number.isNaN(date.getTime())
-              ? memory.memory_date
-              : format(date, "EEEE, d MMMM yyyy", { locale: localeId })}
+            {dateLabel}
           </p>
 
           <h1 className="mt-2 text-balance break-words font-heading text-3xl font-semibold leading-tight text-ink">
@@ -92,13 +146,31 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
 
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {images.map((image, index) => (
-              <li key={image.id} className="polaroid p-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/api/memory-images/${image.id}`}
-                  alt={`${memory.title} - foto ${index + 2}`}
-                  className="aspect-square w-full rounded-[8px] object-cover"
-                />
+              <li
+                key={image.id}
+                className="animate-rise polaroid p-2"
+                style={
+                  { "--rise-delay": `${index * 60}ms` } as CSSProperties
+                }
+              >
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(index + 1)}
+                  aria-label={`Perbesar ${memory.title} - foto ${index + 2}`}
+                  className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`/api/memory-images/${image.id}`}
+                    alt={`${memory.title} - foto ${index + 2}`}
+                    loading="lazy"
+                    className="aspect-square w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+                  />
+                  <span
+                    className="pointer-events-none absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/15"
+                    aria-hidden
+                  />
+                </button>
               </li>
             ))}
           </ul>
@@ -114,6 +186,15 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
         </Button>
         <DeleteMemoryDialog memoryId={memory.id} />
       </div>
+
+      <PhotoLightbox
+        open={lightboxIndex !== null}
+        onOpenChange={(open) => {
+          if (!open) setLightboxIndex(null);
+        }}
+        photos={photos}
+        startIndex={lightboxIndex ?? 0}
+      />
     </article>
   );
 }

@@ -171,12 +171,45 @@ h4 {
   }
 }
 
+/* Cards / photos that rise softly into place. Stagger with `--rise-delay`. */
+@keyframes lm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* The photo inside the lightbox pops in when it changes. */
+@keyframes lm-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate-fade-in {
   animation: lm-fade-in 240ms ease-out both;
 }
 
 .animate-float {
   animation: lm-float 4s ease-in-out infinite;
+}
+
+.animate-rise {
+  animation: lm-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+.animate-pop {
+  animation: lm-pop 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -173,6 +173,12 @@ Style: - Polaroid card - Rounded corner - Soft shadow - Slight rotation
 
 Image: - Aspect ratio 4:3 - Object cover
 
+Interaksi: - Mengetuk foto membuka **Photo Lightbox** - Caption (tanggal,
+judul, "Buka cerita") menaut ke halaman detail kenangan
+
+Animasi: - Kartu muncul dengan `lm-rise` (stagger ~55ms per kartu) - Foto
+zoom halus saat hover - Pita tape muncul saat hover
+
 ------------------------------------------------------------------------
 
 # 8. Memory Detail Page
@@ -199,6 +205,10 @@ Foto menjadi hero element.
 Story width: maksimal 700px
 
 Galeri: grid 2-3 kolom kartu polaroid untuk foto tambahan.
+
+Cover dan foto tambahan dapat diketuk untuk membuka **Photo Lightbox**
+(lihat 14.1) yang menampilkan seluruh foto kenangan dengan navigasi
+sebelumnya/berikutnya.
 
 ------------------------------------------------------------------------
 
@@ -323,13 +333,42 @@ Untuk konfirmasi delete:
     Batal
     Hapus
 
+## 14.1 Photo Lightbox
+
+Komponen: `PhotoLightbox`.
+
+Dibuka dengan mengetuk foto di linimasa atau galeri detail:
+
+    [ Tutup ]
+
+  ‹   [ Foto besar, frame putih ]   ›
+
+      Judul kenangan
+      Tanggal · Lokasi
+      [ Buka cerita lengkap ]
+
+Aturan:
+
+-   Latar gelap `bg-ink/85` dengan blur dan foto berbingkai putih.
+-   Navigasi dengan tombol panah kiri/kanan, tombol di layar, atau tombol
+    panah keyboard saat ada lebih dari satu foto.
+-   Counter `n / total` hanya tampil bila ada lebih dari satu foto.
+-   Tombol **Buka cerita lengkap** hanya tampil untuk foto di linimasa.
+-   Tutup dengan `Esc`, tombol Tutup, atau mengetuk area gelap.
+-   Fokus terperangkap di dalam dialog (Radix Dialog) dan foto diberi
+    `lm-pop` saat berganti.
+
 ------------------------------------------------------------------------
 
 # 15. Animation Guidelines
 
-Gunakan: - Fade in - Scale - Hover lift - Floating sticker
+Gunakan: - Fade in (`lm-fade-in`) - Rise in (`lm-rise`, kartu & galeri) -
+Pop (`lm-pop`, foto di lightbox) - Hover lift / zoom - Floating sticker
 
-Durasi: 150-300ms
+Durasi: 150-520ms
+
+Stagger: gunakan CSS variable `--rise-delay` (maksimal ~11 langkah × 55ms)
+agar kartu muncul berurutan tanpa terasa lambat.
 
 Hindari: - Animasi berlebihan - Mengganggu membaca
 
@@ -419,6 +458,7 @@ Feedback berhasil.
   SettingsForm    Scrapbook identity card
   Detail          Full scrapbook page
   Delete Dialog   Confirmation paper card
+  Photo Lightbox  Framed photo viewer
 
 ------------------------------------------------------------------------
 

@@ -1,6 +1,6 @@
 # Little Moments - Test Report
 
-Version: 1.3
+Version: 1.4
 Status: Executed (end-to-end against a live Supabase project)
 Reference plan: TEST-PLAN.md
 
@@ -58,6 +58,10 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | F16 | Edit extras (add / remove) | Edit form | Added rows inserted, removed rows + files deleted | PASS - survivors renumbered 0..n-1, removed file gone |
 | F17 | Delete memory with extras | Confirm dialog | Row, `memory_images` rows and all files removed | PASS - `memories`, `memory_images` and bucket all empty |
 | F18 | Scrapbook settings | `/settings` form | `scrapbook_settings` updated, header refreshed | PASS - live update plus revert verified |
+| F19 | Timeline card photo opens lightbox | Tap a card photo on `/memories` | Lightbox with photo, title, date, location, "Buka cerita lengkap" | PASS - live; image loaded 800x600 |
+| F20 | Detail gallery lightbox | Tap an extra photo on `/memories/[id]` | Lightbox opens on that photo, prev/next + counter `n / total` | PASS - opened at `2 / 2`, prev -> `1 / 2` (cover) |
+| F21 | Close lightbox | `Esc`, Tutup, or tap the dimmed backdrop | Dialog closes, focus returns to the page | PASS - live (Esc) |
+| F22 | Timeline rise-in animation | Inspect `.animate-rise` on `/memories` | Staggered `--rise-delay`, polaroid rotation preserved | PASS - `lm-rise` 0.52s, rotate -1deg / 1deg |
 
 # 3. Security tests
 
@@ -166,6 +170,15 @@ against the live project after migration `0003` was applied.
 - Perbaikan urutan foto (`position`) saat salah satu foto ekstra dihapus (6.2).
 - Verifikasi `/settings` end to end (ubah lalu kembalikan) lewat `updated_at`.
 
+# 7.3 Changes since v1.3
+
+- Kartu linimasa tampil dengan animasi `lm-rise` (stagger ~55ms) dan foto
+  boleh diketuk untuk membuka **Photo Lightbox** (F19, F22).
+- Halaman detail: cover dan foto galeri dapat diketuk; lightbox menampilkan
+  seluruh foto dengan navigasi sebelumnya/berikutnya dan counter (F20, F21).
+- Token animasi baru `lm-rise` / `lm-pop` tetap menghormati
+  `prefers-reduced-motion` (DESIGN.md section 15, 14.1).
+
 # 8. Summary
 
 - Static validation: **typecheck, lint, and production build all pass**.
@@ -174,10 +187,12 @@ against the live project after migration `0003` was applied.
   project**.
 - Authentication, session handling, route protection, cookie security, rate
   limiting, file validation, and error handling: **verified**.
+- Photo lightbox on the timeline and detail gallery, plus card rise-in
+  animations: **verified live** (F19-F22).
 - Storage stays private; the database stores paths only; no secrets reach the
   client.
 - Layout is mobile-first and overflow-free at 320 / 390 / 768 / 1280 px.
 - Two real bugs were found and fixed: out-of-range pagination (v1.2) and
   duplicate gallery positions after an edit (v1.3).
-- v1.3 applies migration `0003`, completes the multi-photo and settings live
-  runs, and adds the responsive polish.
+- v1.4 adds the lightbox + motion polish; v1.3 applies migration `0003` and
+  the responsive polish.
