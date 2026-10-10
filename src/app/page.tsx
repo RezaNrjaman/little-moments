@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { PasswordGate } from "@/components/auth/PasswordGate";
+import { FallingPetals } from "@/components/scrapbook/FallingPetals";
 import { getSession } from "@/lib/auth/session";
 
 /** Fully dynamic: it redirects based on the session cookie. */
@@ -12,6 +13,7 @@ export default async function HomePage() {
 
   return (
     <main>
+      <FallingPetals />
       <PasswordGate />
     </main>
   );

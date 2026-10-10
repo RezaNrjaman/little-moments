@@ -1,6 +1,6 @@
 # Little Moments - Test Report
 
-Version: 1.4
+Version: 1.5
 Status: Executed (end-to-end against a live Supabase project)
 Reference plan: TEST-PLAN.md
 
@@ -62,6 +62,8 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | F20 | Detail gallery lightbox | Tap an extra photo on `/memories/[id]` | Lightbox opens on that photo, prev/next + counter `n / total` | PASS - opened at `2 / 2`, prev -> `1 / 2` (cover) |
 | F21 | Close lightbox | `Esc`, Tutup, or tap the dimmed backdrop | Dialog closes, focus returns to the page | PASS - live (Esc) |
 | F22 | Timeline rise-in animation | Inspect `.animate-rise` on `/memories` | Staggered `--rise-delay`, polaroid rotation preserved | PASS - `lm-rise` 0.52s, rotate -1deg / 1deg |
+| F23 | Timeline masonry layout | `/memories` with several memories | 2 / 3 / 4 CSS columns, varied photo shapes and tilts, no overflow | PASS - live: 3 cols @800px, cards 232px, aspects 4:3 / square / 3:4 / 4:5, `scrollWidth` 785 < 800 |
+| F24 | Falling rose petals | Private pages + gate | `FallingPetals` drifts behind the content and pauses under reduced motion | PASS - 18 petals, `lm-fall` 11s, layer `z-index: -10`, measured 48px fall in 700ms |
 
 # 3. Security tests
 
@@ -178,6 +180,17 @@ against the live project after migration `0003` was applied.
   seluruh foto dengan navigasi sebelumnya/berikutnya dan counter (F20, F21).
 - Token animasi baru `lm-rise` / `lm-pop` tetap menghormati
   `prefers-reduced-motion` (DESIGN.md section 15, 14.1).
+
+# 7.4 Changes since v1.4
+
+- Linimasa kini **masonry** (CSS multi-column): 2 kolom di HP, 3 di tablet,
+  4 di desktop. Foto punya aspect ratio, kemiringan, dan offset berbeda
+  sehingga terasa seperti scrapbook, bukan grid kaku (F23).
+- Kartu menegak dan terangkat saat di-hover.
+- Animasi baru **kelopak mawar berjatuhan** (`FallingPetals`, `lm-fall`) pada
+  linimasa, detail, halaman lain, dan halaman kunci — murni CSS tanpa
+  JavaScript klien (F24).
+- Stiker header mengapung lembut (`.animate-float`).
 
 # 8. Summary
 

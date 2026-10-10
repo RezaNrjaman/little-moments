@@ -16,17 +16,40 @@ type MemoryCardProps = {
 
 const SNIPPET_LENGTH = 120;
 
-/** Slight alternating tilt, like photos taped to a page. */
+/** Alternating tilts so the wall of photos feels hand-placed, not a grid. */
 const ROTATIONS = [
-  "-rotate-1",
+  "-rotate-2",
   "rotate-1",
-  "-rotate-[0.6deg]",
-  "rotate-[0.4deg]",
+  "-rotate-1",
+  "rotate-2",
+  "-rotate-[1.5deg]",
+  "rotate-[0.5deg]",
+];
+
+/** Tiny sideways nudges for the messy scrapbook look. */
+const OFFSETS = [
+  "translate-x-0",
+  "translate-x-1",
+  "-translate-x-1",
+  "translate-x-2",
+  "-translate-x-2",
+  "translate-x-0.5",
+];
+
+/** Mixed photo shapes, like scattered polaroids of different sizes. */
+const ASPECTS = [
+  "aspect-[4/3]",
+  "aspect-square",
+  "aspect-[3/4]",
+  "aspect-[4/5]",
+  "aspect-[5/4]",
+  "aspect-square",
 ];
 
 /**
- * MemoryCard (DESIGN.md section 7): polaroid photo card with a soft rise-in
- * animation. The photo opens a lightbox; the caption links to the full story.
+ * MemoryCard (DESIGN.md section 7): a taped polaroid with a soft rise-in
+ * animation. Photos have varied shapes and tilts so the masonry reads like a
+ * scrapbook page. The photo opens a lightbox; the caption links to the story.
  */
 export function MemoryCard({ memory, index }: MemoryCardProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -39,15 +62,16 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
   return (
     <>
       <div
-        className="animate-rise h-full"
+        className="animate-rise mb-4 break-inside-avoid sm:mb-5"
         style={
           { "--rise-delay": `${Math.min(index, 11) * 55}ms` } as CSSProperties
         }
       >
         <div
           className={cn(
-            "polaroid group relative flex h-full w-full flex-col p-3 transition-transform duration-300 hover:-translate-y-1 hover:shadow-lift",
+            "polaroid group relative flex w-full flex-col p-2.5 transition-all duration-300 hover:z-10 hover:-translate-y-1.5 hover:rotate-0 hover:shadow-lift sm:p-3",
             ROTATIONS[index % ROTATIONS.length],
+            OFFSETS[index % OFFSETS.length],
           )}
         >
           <span
@@ -67,7 +91,10 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
               src={`/api/images/${memory.id}`}
               alt={memory.title}
               loading="lazy"
-              className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out group-hover/photo:scale-[1.06]"
+              className={cn(
+                "w-full object-cover transition-transform duration-700 ease-out group-hover/photo:scale-[1.08]",
+                ASPECTS[index % ASPECTS.length],
+              )}
             />
 
             <span
@@ -86,15 +113,15 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
             href={`/memories/${memory.id}`}
             className="group/link mt-3 flex flex-1 flex-col px-1 pb-1 text-left"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-soft sm:text-[11px]">
               {dateLabel}
             </p>
-            <h3 className="mt-0.5 break-words font-heading text-lg font-semibold leading-snug text-ink">
+            <h3 className="mt-0.5 break-words font-heading text-base font-semibold leading-snug text-ink sm:text-lg">
               {memory.title}
             </h3>
 
             {story ? (
-              <p className="mt-1 line-clamp-2 break-words text-sm text-ink-soft">
+              <p className="mt-1 line-clamp-2 break-words text-xs text-ink-soft sm:text-sm">
                 {story.length > SNIPPET_LENGTH
                   ? `${story.slice(0, SNIPPET_LENGTH).trimEnd()}...`
                   : story}
@@ -102,13 +129,13 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
             ) : null}
 
             {memory.location ? (
-              <p className="mt-2 flex items-start gap-1 break-words text-xs text-ink-soft/90">
+              <p className="mt-1.5 flex items-start gap-1 break-words text-[11px] text-ink-soft/90 sm:mt-2 sm:text-xs">
                 <MapPin className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
                 <span className="min-w-0">{memory.location}</span>
               </p>
             ) : null}
 
-            <span className="mt-auto inline-flex items-center gap-1 pt-3 text-xs font-semibold text-pink-strong transition-colors group-hover/link:text-ink">
+            <span className="mt-auto inline-flex items-center gap-1 pt-2.5 text-[11px] font-semibold text-pink-strong transition-colors group-hover/link:text-ink sm:pt-3 sm:text-xs">
               <Heart className="h-3.5 w-3.5" aria-hidden />
               Buka cerita
             </span>

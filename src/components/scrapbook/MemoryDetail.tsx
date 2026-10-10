@@ -17,6 +17,7 @@ import {
   PhotoLightbox,
   type LightboxPhoto,
 } from "@/components/scrapbook/PhotoLightbox";
+import { cn } from "@/lib/utils";
 import type { Memory, MemoryImage } from "@/features/memories/types";
 
 type MemoryDetailProps = {
@@ -24,6 +25,16 @@ type MemoryDetailProps = {
   /** Extra photos shown in the gallery below the story. */
   images?: MemoryImage[];
 };
+
+/** Alternating tilts for the extra-photo gallery, mirroring the timeline. */
+const GALLERY_ROTATIONS = [
+  "-rotate-2",
+  "rotate-1",
+  "-rotate-1",
+  "rotate-2",
+  "-rotate-[1.5deg]",
+  "rotate-[0.5deg]",
+];
 
 /**
  * MemoryDetail (DESIGN.md section 8).
@@ -148,7 +159,10 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
             {images.map((image, index) => (
               <li
                 key={image.id}
-                className="animate-rise polaroid p-2"
+                className={cn(
+                  "animate-rise polaroid p-2 transition-transform duration-300 hover:z-10 hover:-translate-y-1 hover:rotate-0",
+                  GALLERY_ROTATIONS[index % GALLERY_ROTATIONS.length],
+                )}
                 style={
                   { "--rise-delay": `${index * 60}ms` } as CSSProperties
                 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { requirePageSession } from "@/lib/auth/session";
 import { ScrapbookHeader } from "@/components/scrapbook/ScrapbookHeader";
+import { FallingPetals } from "@/components/scrapbook/FallingPetals";
 import { getScrapbookSettings } from "@/features/settings/queries";
 import { siteConfig } from "@/config/site";
 
@@ -44,6 +45,7 @@ export default async function PrivateLayout({
 
   return (
     <div className="safe-page-bottom flex min-h-[100dvh] flex-col">
+      <FallingPetals />
       <ScrapbookHeader coupleName={coupleName} introMessage={introMessage} />
       <main className="flex-1">{children}</main>
 

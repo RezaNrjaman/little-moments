@@ -212,6 +212,40 @@ h4 {
   animation: lm-pop 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+/* Falling rose petals (decorative background layer, behind the content). */
+@keyframes lm-fall {
+  0% {
+    transform: translate3d(0, -12vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--petal-opacity, 0.45);
+  }
+  50% {
+    transform: translate3d(var(--sway, 40px), 45vh, 0)
+      rotate(calc(var(--spin, 320deg) / 2));
+    opacity: var(--petal-opacity, 0.45);
+  }
+  92% {
+    opacity: var(--petal-opacity, 0.45);
+  }
+  100% {
+    transform: translate3d(0, 112vh, 0) rotate(var(--spin, 320deg));
+    opacity: 0;
+  }
+}
+
+.lm-petal {
+  position: absolute;
+  top: 0;
+  line-height: 1;
+  will-change: transform, opacity;
+  animation-name: lm-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

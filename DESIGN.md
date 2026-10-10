@@ -161,6 +161,11 @@ Konsep:
 Karakter: - Vertical journal timeline - Chronological storytelling -
 Visual scanning mudah
 
+Layout: - **Masonry** (CSS multi-column): 2 kolom di HP, 3 di tablet, 4 di
+desktop — seperti galeri HP, bukan satu baris. - Foto punya bentuk (aspect
+ratio) dan kemiringan berbeda agar terasa seperti scrapbook, bukan grid
+kaku.
+
 ------------------------------------------------------------------------
 
 # 7. Memory Card
@@ -363,9 +368,15 @@ Aturan:
 # 15. Animation Guidelines
 
 Gunakan: - Fade in (`lm-fade-in`) - Rise in (`lm-rise`, kartu & galeri) -
-Pop (`lm-pop`, foto di lightbox) - Hover lift / zoom - Floating sticker
+Pop (`lm-pop`, foto di lightbox) - Fall (`lm-fall`, kelopak mawar pada
+lapisan latar) - Hover lift / zoom / menegak (`hover:rotate-0`) - Floating
+sticker (`.animate-float`)
 
 Durasi: 150-520ms
+
+Latar dekoratif: komponen `FallingPetals` menggambar kelopak mawar
+(`lm-fall`) di lapisan `fixed -z-10`, murni CSS (tanpa JavaScript klien),
+nilai deterministik agar tidak ada perbedaan server/klien.
 
 Stagger: gunakan CSS variable `--rise-delay` (maksimal ~11 langkah × 55ms)
 agar kartu muncul berurutan tanpa terasa lambat.

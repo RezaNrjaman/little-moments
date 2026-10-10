@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { Heart, Settings2 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 
@@ -34,13 +35,15 @@ export function ScrapbookHeader({
 
         <span
           aria-hidden
-          className="sticker absolute left-3 top-4 h-9 w-9 bg-butter text-sm"
+          className="sticker animate-float absolute left-3 top-4 h-9 w-9 bg-butter text-sm"
+          style={{ "--float-rotate": "-6deg", animationDelay: "0.2s" } as CSSProperties}
         >
           ✿
         </span>
         <span
           aria-hidden
-          className="sticker absolute right-4 top-6 h-9 w-9 bg-mint text-sm"
+          className="sticker animate-float absolute right-4 top-6 h-9 w-9 bg-mint text-sm"
+          style={{ "--float-rotate": "7deg", animationDelay: "1.1s" } as CSSProperties}
         >
           ♡
         </span>

@@ -59,7 +59,7 @@ export function MemoryTimeline({
               <span className="h-px flex-1 bg-ink/10" aria-hidden />
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="columns-2 gap-4 sm:columns-3 sm:gap-5 lg:columns-4">
               {group.items.map((memory) => {
                 const currentIndex = index;
                 index += 1;
