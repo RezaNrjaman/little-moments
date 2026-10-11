@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { id as localeId } from "date-fns/locale";
@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DeleteMemoryDialog } from "@/components/forms/DeleteMemoryDialog";
+import { Reveal } from "@/components/motion/Reveal";
 import {
   PhotoLightbox,
   type LightboxPhoto,
@@ -39,7 +40,8 @@ const GALLERY_ROTATIONS = [
 /**
  * MemoryDetail (DESIGN.md section 8).
  * The photo is the hero element, the story is limited to a 700px column.
- * Tapping any photo opens the framed lightbox with the full set.
+ * The hero photo and the extra photos reveal themselves as they enter the
+ * viewport; tapping any photo opens the framed lightbox with the full set.
  */
 export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
@@ -79,53 +81,55 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
         Kembali ke linimasa
       </Link>
 
-      <div className="polaroid relative p-3 sm:p-4">
-        <span className="tape" aria-hidden />
+      <Reveal>
+        <div className="polaroid relative p-3 sm:p-4">
+          <span className="tape" aria-hidden />
 
-        <button
-          type="button"
-          onClick={() => setLightboxIndex(0)}
-          aria-label={`Perbesar foto: ${memory.title}`}
-          className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
-        >
-          {/* Private photo, served by the session-checked image route. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={coverSrc}
-            alt={memory.title}
-            className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] sm:aspect-[16/10]"
-          />
-
-          <span
-            className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-            aria-hidden
-          />
-          <span
-            className="pointer-events-none absolute bottom-3 right-3 inline-flex h-9 w-9 translate-y-1 items-center justify-center rounded-full bg-white/90 text-ink opacity-0 shadow-soft transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
-            aria-hidden
+          <button
+            type="button"
+            onClick={() => setLightboxIndex(0)}
+            aria-label={`Perbesar foto: ${memory.title}`}
+            className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
           >
-            <Maximize2 className="h-4 w-4" />
-          </span>
-        </button>
+            {/* Private photo, served by the session-checked image route. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={coverSrc}
+              alt={memory.title}
+              className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] sm:aspect-[16/10]"
+            />
 
-        <div className="px-2 pb-2 pt-5 text-center">
-          <p className="flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
-            <CalendarHeart className="h-3.5 w-3.5" aria-hidden />
-            {dateLabel}
-          </p>
+            <span
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+              aria-hidden
+            />
+            <span
+              className="pointer-events-none absolute bottom-3 right-3 inline-flex h-9 w-9 translate-y-1 items-center justify-center rounded-full bg-white/90 text-ink opacity-0 shadow-soft transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+              aria-hidden
+            >
+              <Maximize2 className="h-4 w-4" />
+            </span>
+          </button>
 
-          <h1 className="mt-2 text-balance break-words font-heading text-3xl font-semibold leading-tight text-ink">
-            {memory.title}
-          </h1>
-
-          {memory.location ? (
-            <p className="mt-2 flex items-start justify-center gap-1.5 text-sm text-ink-soft">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-              <span className="min-w-0 break-words">{memory.location}</span>
+          <div className="px-2 pb-2 pt-5 text-center">
+            <p className="flex items-center justify-center gap-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-ink-soft">
+              <CalendarHeart className="h-3.5 w-3.5" aria-hidden />
+              {dateLabel}
             </p>
-          ) : null}
+
+            <h1 className="mt-2 text-balance break-words font-heading text-3xl font-semibold leading-tight text-ink">
+              {memory.title}
+            </h1>
+
+            {memory.location ? (
+              <p className="mt-2 flex items-start justify-center gap-1.5 text-sm text-ink-soft">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                <span className="min-w-0 break-words">{memory.location}</span>
+              </p>
+            ) : null}
+          </div>
         </div>
-      </div>
+      </Reveal>
 
       {hasStory ? (
         <section className="mx-auto mt-6 max-w-[700px]">
@@ -157,34 +161,35 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
 
           <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {images.map((image, index) => (
-              <li
-                key={image.id}
-                className={cn(
-                  "animate-rise polaroid p-2 transition-transform duration-300 hover:z-10 hover:-translate-y-1 hover:rotate-0",
-                  GALLERY_ROTATIONS[index % GALLERY_ROTATIONS.length],
-                )}
-                style={
-                  { "--rise-delay": `${index * 60}ms` } as CSSProperties
-                }
-              >
-                <button
-                  type="button"
-                  onClick={() => setLightboxIndex(index + 1)}
-                  aria-label={`Perbesar ${memory.title} - foto ${index + 2}`}
-                  className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`/api/memory-images/${image.id}`}
-                    alt={`${memory.title} - foto ${index + 2}`}
-                    loading="lazy"
-                    className="aspect-square w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
-                  />
-                  <span
-                    className="pointer-events-none absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/15"
-                    aria-hidden
-                  />
-                </button>
+              <li key={image.id}>
+                {/* Row by row: the tilt lives on the card, the reveal on the shell. */}
+                <Reveal delay={(index % 3) * 70}>
+                  <div
+                    className={cn(
+                      "polaroid p-2 transition-transform duration-300 hover:z-10 hover:-translate-y-1 hover:rotate-0",
+                      GALLERY_ROTATIONS[index % GALLERY_ROTATIONS.length],
+                    )}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setLightboxIndex(index + 1)}
+                      aria-label={`Perbesar ${memory.title} - foto ${index + 2}`}
+                      className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={`/api/memory-images/${image.id}`}
+                        alt={`${memory.title} - foto ${index + 2}`}
+                        loading="lazy"
+                        className="aspect-square w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+                      />
+                      <span
+                        className="pointer-events-none absolute inset-0 bg-ink/0 transition-colors duration-300 group-hover:bg-ink/15"
+                        aria-hidden
+                      />
+                    </button>
+                  </div>
+                </Reveal>
               </li>
             ))}
           </ul>

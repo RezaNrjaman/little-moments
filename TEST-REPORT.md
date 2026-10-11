@@ -1,6 +1,6 @@
 # Little Moments - Test Report
 
-Version: 1.6
+Version: 1.7
 Status: Executed (end-to-end against a live Supabase project)
 Reference plan: TEST-PLAN.md
 
@@ -66,6 +66,8 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | F24 | Falling rose petals | Private pages + gate | `FallingPetals` drifts behind the content and pauses under reduced motion | PASS - 18 petals, `lm-fall` 11s, layer `z-index: -10`, measured 48px fall in 700ms |
 | F25 | Import page | `/import` (session) | Folder picker + dropzone, Indonesian copy, header "Impor" link | PASS - page renders, dropzone interactive (dragover restyles), one file input with `webkitdirectory` |
 | F26 | Bulk import per folder | Folders `2024-03-02` (2 photos), `15-04-2024`, `Liburan` | One memory per sub-folder, date from folder name, cover + extras, manual date fix | PASS - 3 memories created (2 Mar / 15 Apr / 1 Jun 2024), 2-photo folder = cover + 1 extra, 0 failures, test data removed |
+| F27 | Photo scroll reveal | `/memories` + memory detail (10 photos) | Photos start hidden, get `.lm-reveal-in` the first time they enter the viewport, then stay visible | PASS (DOM + CSSOM) - every photo wrapped in `.lm-reveal`; on load only the in-viewport card was marked; keyframes verified as 640ms `cubic-bezier(0.22, 1, 0.36, 1)` with `fill: both`; in a visible tab all 10 detail photos finished at opacity 1 |
+| F28 | Reveal never traps content | SSR HTML + reduced motion | Photos stay visible without JS or with reduced motion | PASS - `<noscript><style>.lm-reveal{opacity:1!important;transform:none!important}</style></noscript>` is present in the SSR HTML; `prefers-reduced-motion` collapses duration and delay to one frame; 2.5s in-viewport deadline in `Reveal` |
 
 # 3. Security tests
 
@@ -204,6 +206,20 @@ against the live project after migration `0003` was applied.
 - Alur unggah memakai endpoint + tiket yang sama, jadi tak ada jalur baru yang
   melewati validasi server. Tidak ada dependensi baru.
 
+# 7.6 Changes since 1.6
+
+- Setiap foto kini **muncul saat pertama kali masuk layar** (`Reveal` +
+  `.lm-reveal` / `.lm-reveal-in`): fade + terangkat halus 18px, durasi 640ms,
+  sekali jalan. Berlaku untuk kartu linimasa, foto utama detail, dan galeri
+  "Foto lainnya" (DESIGN.md 15.1).
+- Tilt polaroid dipindah ke elemen dalam sehingga `transform` animasi reveal
+  tidak menimpa rotasi Tailwind.
+- `animate-rise` / `--rise-delay` dihapus dari CSS karena sudah tidak dipakai.
+- Catatan uji: tab headless dengan `visibilityState: "hidden"` membekukan
+  animasi CSS dan IntersectionObserver, jadi progresi scroll diverifikasi lewat
+  DOM + CSSOM serta satu tab yang terlihat (semua 10 foto detail berakhir pada
+  opacity 1).
+
 # 8. Summary
 
 - Static validation: **typecheck, lint, and production build all pass**.
@@ -222,4 +238,4 @@ against the live project after migration `0003` was applied.
 - v1.4 adds the lightbox + motion polish; v1.3 applies migration `0003` and
   the responsive polish.
 - v1.5 adds the masonry timeline + falling rose petals; v1.6 adds bulk folder
-  import (F25-F26).
+  import (F25-F26); v1.7 adds the scroll reveal for photos (F27-F28).

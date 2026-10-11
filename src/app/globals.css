@@ -147,7 +147,7 @@ h4 {
 }
 
 /* ============================================
-   Animation (150-300ms, reduced motion friendly)
+   Animation (smooth, reduced motion friendly)
    ============================================ */
 
 @keyframes lm-fade-in {
@@ -171,18 +171,6 @@ h4 {
   }
 }
 
-/* Cards / photos that rise softly into place. Stagger with `--rise-delay`. */
-@keyframes lm-rise {
-  from {
-    opacity: 0;
-    transform: translateY(18px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 /* The photo inside the lightbox pops in when it changes. */
 @keyframes lm-pop {
   from {
@@ -203,13 +191,33 @@ h4 {
   animation: lm-float 4s ease-in-out infinite;
 }
 
-.animate-rise {
-  animation: lm-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: var(--rise-delay, 0ms);
-}
-
 .animate-pop {
   animation: lm-pop 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Photos fade + lift into place the first time they enter the viewport,
+   instead of animating once at page load while still off screen.
+   `Reveal` adds `.lm-reveal-in`; without JS the <noscript> style in
+   app/layout.tsx keeps the content visible instead of leaving it hidden. */
+@keyframes lm-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.lm-reveal {
+  opacity: 0;
+  transform: translateY(18px) scale(0.985);
+}
+
+.lm-reveal-in {
+  animation: lm-reveal 640ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--reveal-delay, 0ms);
 }
 
 /* Falling rose petals (decorative background layer, behind the content). */
@@ -251,6 +259,7 @@ h4 {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }

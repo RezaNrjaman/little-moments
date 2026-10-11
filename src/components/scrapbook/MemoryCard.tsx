@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 import { Heart, MapPin, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PhotoLightbox } from "@/components/scrapbook/PhotoLightbox";
+import { Reveal } from "@/components/motion/Reveal";
 import type { Memory } from "@/features/memories/types";
 
 type MemoryCardProps = {
@@ -47,9 +48,10 @@ const ASPECTS = [
 ];
 
 /**
- * MemoryCard (DESIGN.md section 7): a taped polaroid with a soft rise-in
- * animation. Photos have varied shapes and tilts so the masonry reads like a
- * scrapbook page. The photo opens a lightbox; the caption links to the story.
+ * MemoryCard (DESIGN.md section 7): a taped polaroid that reveals itself the
+ * first time it scrolls into view. Photos have varied shapes and tilts so the
+ * masonry reads like a scrapbook page. The photo opens a lightbox; the caption
+ * links to the story.
  */
 export function MemoryCard({ memory, index }: MemoryCardProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -61,11 +63,9 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
 
   return (
     <>
-      <div
-        className="animate-rise mb-4 break-inside-avoid sm:mb-5"
-        style={
-          { "--rise-delay": `${Math.min(index, 11) * 55}ms` } as CSSProperties
-        }
+      <Reveal
+        delay={(index % 4) * 60}
+        className="mb-4 break-inside-avoid sm:mb-5"
       >
         <div
           className={cn(
@@ -141,7 +141,7 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
             </span>
           </Link>
         </div>
-      </div>
+      </Reveal>
 
       <PhotoLightbox
         open={lightboxOpen}

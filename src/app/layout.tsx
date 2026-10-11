@@ -42,6 +42,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${fredoka.variable} ${nunitoSans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        {/* Photos stay hidden until `Reveal` animates them in. Without
+            JavaScript nothing ever triggers that, so show them plainly. */}
+        <noscript>
+          <style>{`.lm-reveal{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         {children}
         <ToastNotifications />
       </body>

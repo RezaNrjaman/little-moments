@@ -380,12 +380,33 @@ Aturan:
 
 # 15. Animation Guidelines
 
-Gunakan: - Fade in (`lm-fade-in`) - Rise in (`lm-rise`, kartu & galeri) -
-Pop (`lm-pop`, foto di lightbox) - Fall (`lm-fall`, kelopak mawar pada
-lapisan latar) - Hover lift / zoom / menegak (`hover:rotate-0`) - Floating
-sticker (`.animate-float`)
+Gunakan: - Fade in (`lm-fade-in`) - Reveal saat masuk layar (`lm-reveal`,
+kartu linimasa, foto hero & galeri detail) - Pop (`lm-pop`, foto di
+lightbox) - Fall (`lm-fall`, kelopak mawar pada lapisan latar) - Hover lift /
+zoom / menegak (`hover:rotate-0`) - Floating sticker (`.animate-float`)
 
-Durasi: 150-520ms
+Durasi: 150-640ms
+
+## 15.1 Reveal foto
+
+Komponen `Reveal` membungkus setiap foto. Wrapper berdimulai transparan dan
+terangkat 18px, lalu `IntersectionObserver` menambahkan kelas
+`.lm-reveal-in` tepat satu kali ketika foto pertama kali masuk layar -
+sehingga menggulir ke bawah terasa seperti membuka halaman scrapbook, bukan
+melihat foto yang sudah terlanjur muncul.
+
+Aturan:
+
+-   Durasi 640ms, easing `cubic-bezier(0.22, 1, 0.36, 1)`, sekali jalan
+    (menyorot balik tidak menyembunyikan foto lagi).
+-   Jeda antar foto memakai `--reveal-delay`: 0-180ms di linimasa, 0-140ms
+    per baris di galeri detail.
+-   Tilt polaroid tetap berada di elemen dalam sehingga tidak bentrok
+    dengan `transform` animasi.
+-   Aman: tanpa JavaScript konten tetap tampil lewat `<noscript>` di
+    `app/layout.tsx`; `prefers-reduced-motion` membuat animasi selesai
+    dalam satu frame; ada jaring pengaman 2,5 detik untuk foto yang sudah
+    berada di layar.
 
 Latar dekoratif: komponen `FallingPetals` menggambar kelopak mawar
 (`lm-fall`) di lapisan `fixed -z-10`, murni CSS (tanpa JavaScript klien),
