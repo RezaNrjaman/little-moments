@@ -1,6 +1,6 @@
 # Little Moments - Test Report
 
-Version: 1.7
+Version: 1.8
 Status: Executed (end-to-end against a live Supabase project)
 Reference plan: TEST-PLAN.md
 
@@ -68,6 +68,7 @@ now trims a trailing slash or a copied `/rest/v1` suffix automatically.
 | F26 | Bulk import per folder | Folders `2024-03-02` (2 photos), `15-04-2024`, `Liburan` | One memory per sub-folder, date from folder name, cover + extras, manual date fix | PASS - 3 memories created (2 Mar / 15 Apr / 1 Jun 2024), 2-photo folder = cover + 1 extra, 0 failures, test data removed |
 | F27 | Photo scroll reveal | `/memories` + memory detail (10 photos) | Photos start hidden, get `.lm-reveal-in` the first time they enter the viewport, then stay visible | PASS (DOM + CSSOM) - every photo wrapped in `.lm-reveal`; on load only the in-viewport card was marked; keyframes verified as 640ms `cubic-bezier(0.22, 1, 0.36, 1)` with `fill: both`; in a visible tab all 10 detail photos finished at opacity 1 |
 | F28 | Reveal never traps content | SSR HTML + reduced motion | Photos stay visible without JS or with reduced motion | PASS - `<noscript><style>.lm-reveal{opacity:1!important;transform:none!important}</style></noscript>` is present in the SSR HTML; `prefers-reduced-motion` collapses duration and delay to one frame; 2.5s in-viewport deadline in `Reveal` |
+| F29 | Photo fade-in on load | `/memories` (3 cards), detail hero + gallery | The photo itself fades in when it finishes downloading, on top of the card reveal | PASS (DOM + CSSOM) - every `<img>` renders with `.lm-photo` and keeps its aspect classes; `.lm-photo-in` = `0.52s ease-out both lm-photo-in` (opacity only, so the hover zoom is untouched); `<noscript>` also covers `.lm-photo` |
 
 # 3. Security tests
 
@@ -220,6 +221,17 @@ against the live project after migration `0003` was applied.
   DOM + CSSOM serta satu tab yang terlihat (semua 10 foto detail berakhir pada
   opacity 1).
 
+# 7.7 Changes since 1.7
+
+- Foto kini ikut **fade in saat selesai diunduh** (`FadeInImage` +
+  `.lm-photo`/`.lm-photo-in`, 520ms) di kartu linimasa, foto utama detail, dan
+  galeri "Foto lainnya". Sebelumnya kartunya beranimasi tapi fotonya "pop"
+  sendiri ketika unduhan selesai (terlihat jelas di situs live).
+- Animasi hanya di `opacity` sehingga zoom `hover` pada foto tidak tertimpa.
+- `<noscript>` di `app/layout.tsx` kini juga melepas `.lm-photo`.
+- Dibersihkan: paragraf stagger di DESIGN.md 15 yang masih menyebut
+  `--rise-delay` (sudah dihapus) diganti `--reveal-delay`.
+
 # 8. Summary
 
 - Static validation: **typecheck, lint, and production build all pass**.
@@ -238,4 +250,5 @@ against the live project after migration `0003` was applied.
 - v1.4 adds the lightbox + motion polish; v1.3 applies migration `0003` and
   the responsive polish.
 - v1.5 adds the masonry timeline + falling rose petals; v1.6 adds bulk folder
-  import (F25-F26); v1.7 adds the scroll reveal for photos (F27-F28).
+  import (F25-F26); v1.7 adds the scroll reveal for photos (F27-F28); v1.8 adds
+  the photo fade-in on load (F29).

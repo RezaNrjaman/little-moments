@@ -381,9 +381,10 @@ Aturan:
 # 15. Animation Guidelines
 
 Gunakan: - Fade in (`lm-fade-in`) - Reveal saat masuk layar (`lm-reveal`,
-kartu linimasa, foto hero & galeri detail) - Pop (`lm-pop`, foto di
-lightbox) - Fall (`lm-fall`, kelopak mawar pada lapisan latar) - Hover lift /
-zoom / menegak (`hover:rotate-0`) - Floating sticker (`.animate-float`)
+kartu linimasa, foto hero & galeri detail) - Fade in foto saat termuat
+(`lm-photo`, foto di dalam polaroid) - Pop (`lm-pop`, foto di lightbox) - Fall
+(`lm-fall`, kelopak mawar pada lapisan latar) - Hover lift / zoom / menegak
+(`hover:rotate-0`) - Floating sticker (`.animate-float`)
 
 Durasi: 150-640ms
 
@@ -408,12 +409,29 @@ Aturan:
     dalam satu frame; ada jaring pengaman 2,5 detik untuk foto yang sudah
     berada di layar.
 
+## 15.2 Fade in foto saat termuat
+
+Komponen `FadeInImage` menggantikan `<img>` pada foto linimasa, foto utama
+detail, dan galeri "Foto lainnya". Fotenya sendiri transparan sampai selesai
+diunduh, lalu memudar masuk selama 520ms.
+
+Aturan:
+
+-   Tanpa ini, foto yang lambat termuat akan "pop" masuk ke dalam polaroid
+    yang animasinya sudah selesai - terasa patah, terutama di situs live
+    yang mengambil foto dari Supabase lewat `/api/images`.
+-   Hanya `opacity` (tanpa `transform`) agar tidak menimpa zoom `hover`.
+-   Aman seperti `Reveal`: `<noscript>` di `app/layout.tsx` menampilkan foto
+    tanpa JavaScript, foto yang sudah ada di cache dicek ulang setelah
+    hydration (karena `onLoad` tidak berulang), dan foto gagal unduh tetap
+    ditampilkan supaya bingkai tidak kosong.
+
 Latar dekoratif: komponen `FallingPetals` menggambar kelopak mawar
 (`lm-fall`) di lapisan `fixed -z-10`, murni CSS (tanpa JavaScript klien),
 nilai deterministik agar tidak ada perbedaan server/klien.
 
-Stagger: gunakan CSS variable `--rise-delay` (maksimal ~11 langkah × 55ms)
-agar kartu muncul berurutan tanpa terasa lambat.
+Stagger: gunakan CSS variable `--reveal-delay` (linimasa 0-180ms, galeri
+detail 0-140ms per baris) agar kartu muncul berurutan tanpa terasa lambat.
 
 Hindari: - Animasi berlebihan - Mengganggu membaca
 

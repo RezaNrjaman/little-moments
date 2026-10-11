@@ -8,6 +8,7 @@ import { Heart, MapPin, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PhotoLightbox } from "@/components/scrapbook/PhotoLightbox";
 import { Reveal } from "@/components/motion/Reveal";
+import { FadeInImage } from "@/components/motion/FadeInImage";
 import type { Memory } from "@/features/memories/types";
 
 type MemoryCardProps = {
@@ -86,8 +87,7 @@ export function MemoryCard({ memory, index }: MemoryCardProps) {
             className="group/photo relative block w-full overflow-hidden rounded-[8px] bg-cream focus-visible:outline-none"
           >
             {/* Private photo: proxied through the session-checked image route. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <FadeInImage
               src={`/api/images/${memory.id}`}
               alt={memory.title}
               loading="lazy"

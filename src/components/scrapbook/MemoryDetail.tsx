@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { DeleteMemoryDialog } from "@/components/forms/DeleteMemoryDialog";
 import { Reveal } from "@/components/motion/Reveal";
+import { FadeInImage } from "@/components/motion/FadeInImage";
 import {
   PhotoLightbox,
   type LightboxPhoto,
@@ -92,8 +93,7 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
             className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
           >
             {/* Private photo, served by the session-checked image route. */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <FadeInImage
               src={coverSrc}
               alt={memory.title}
               className="aspect-[4/3] w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] sm:aspect-[16/10]"
@@ -176,8 +176,8 @@ export function MemoryDetail({ memory, images = [] }: MemoryDetailProps) {
                       aria-label={`Perbesar ${memory.title} - foto ${index + 2}`}
                       className="group relative block w-full overflow-hidden rounded-[8px] focus-visible:outline-none"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      {/* Private photo, served by the session-checked route. */}
+                      <FadeInImage
                         src={`/api/memory-images/${image.id}`}
                         alt={`${memory.title} - foto ${index + 2}`}
                         loading="lazy"

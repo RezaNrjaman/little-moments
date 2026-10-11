@@ -220,6 +220,27 @@ h4 {
   animation-delay: var(--reveal-delay, 0ms);
 }
 
+/* The photo inside a polaroid fades in when it finishes downloading, so a
+   slow photo never pops into a frame that has already finished its reveal.
+   `FadeInImage` adds `.lm-photo-in`. Opacity only: the hover zoom lives on a
+   transition, and an animation here would override it. */
+.lm-photo {
+  opacity: 0;
+}
+
+.lm-photo-in {
+  animation: lm-photo-in 520ms ease-out both;
+}
+
+@keyframes lm-photo-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* Falling rose petals (decorative background layer, behind the content). */
 @keyframes lm-fall {
   0% {
